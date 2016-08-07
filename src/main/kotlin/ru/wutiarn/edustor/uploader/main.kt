@@ -1,17 +1,23 @@
+package ru.wutiarn.edustor.uploader
+
 import com.mashape.unirest.http.Unirest
 import java.io.File
 import java.util.*
 
 fun main(args: Array<String>) {
     val props = Properties()
-    props.load(File("settings.properties").inputStream())
+    val propsFile = File("edustor-uploader.properties")
+
+    File("/Users/wutiarn/Desktop/temp.txt").writeText("URL: ${propsFile.absoluteFile}")
+
+    props.load(propsFile.inputStream())
     val tokenException = IllegalStateException("Cannot find valid token in settings.properties file")
 
     if (!props.containsKey("token")) {
         throw tokenException
     }
 
-    val baseDir = File(".")
+    val baseDir = File(props.getProperty("dir", "."))
     val files = baseDir.listFiles { file, name -> name.endsWith(".pdf") }
 
     files.forEach {
