@@ -1,16 +1,28 @@
 import com.mashape.unirest.http.Unirest
 import java.io.File
+import java.util.*
 
 fun main(args: Array<String>) {
-    val file = File("/Users/wutiarn/edustor")
-    val files = file.listFiles { file, name -> name.endsWith(".pdf") }
+    val props = Properties()
+    props.load(File("settings.properties").inputStream())
+    val tokenException = IllegalStateException("Cannot find valid token in settings.properties file")
+
+    if (!props.containsKey("token")) {
+        throw tokenException
+    }
+
+    val baseDir = File(".")
+    val files = baseDir.listFiles { file, name -> name.endsWith(".pdf") }
 
     files.forEach {
         val response = Unirest.post("https://edustor.ru/api/documents/upload")
-                .header("token", "a7933bb1-7d01-4db0-91b6-419412dd85c9")
+                .header("token", props.getProperty("token"))
                 .field("file", it, "application/pdf")
                 .asString()
         println("Uploaded ${it.name}. Status: ${response.status}. Message: ${response.status}")
-        if (response.status == 200) it.delete()
+        when(response.status) {
+            200 -> it.delete()
+            403 -> throw tokenException
+        }
     }
 }
