@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
 
     files.forEach {
         val response = Unirest.post("https://edustor.ru/api/documents/upload")
-                .header("token", props.getProperty("token"))
+                .header("Authorization", props.getProperty("token"))
                 .field("file", it, "application/pdf")
                 .asString()
         println("Uploaded ${it.name}. Status: ${response.status}. Message: ${response.status}")
