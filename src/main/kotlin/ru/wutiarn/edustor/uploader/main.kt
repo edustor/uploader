@@ -17,11 +17,11 @@ fun main(args: Array<String>) {
         throw tokenException
     }
 
-    val baseDir = File(props.getProperty("dir", "."))
+    val baseDir = File(props.getProperty("dir", "~"))
     val files = baseDir.listFiles { file, name -> name.endsWith(".pdf") }
 
     files.forEach {
-        val response = Unirest.post("https://edustor.ru/api/documents/upload")
+        val response = Unirest.post("https://edustor.ru/api/pages/upload")
                 .header("Authorization", props.getProperty("token"))
                 .field("file", it, "application/pdf")
                 .asString()
