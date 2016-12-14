@@ -8,8 +8,6 @@ fun main(args: Array<String>) {
     val props = Properties()
     val propsFile = File("edustor-uploader.properties")
 
-    File("/Users/wutiarn/Desktop/temp.txt").writeText("URL: ${propsFile.absoluteFile}")
-
     props.load(propsFile.inputStream())
     val tokenException = IllegalStateException("Cannot find valid token in settings.properties file")
 
@@ -21,7 +19,7 @@ fun main(args: Array<String>) {
     val files = baseDir.listFiles { file, name -> name.endsWith(".pdf") }
 
     files.forEach {
-        val response = Unirest.post("https://edustor.ru/api/pages/upload")
+        val response = Unirest.post("https://upload.edustor.ru/api/v1/upload/pages")
                 .header("Authorization", props.getProperty("token"))
                 .field("file", it, "application/pdf")
                 .asString()
